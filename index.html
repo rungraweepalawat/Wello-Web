@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wello — ใบเสนอราคา</title>
+<style>
+:root{
+  --blue:#022CB7; --pink:#F76595; --yellow:#FAD46C; --ink:#171A2B;
+  --bg:#F7F8FC; --line:#E6E8EF; --muted:#697184; --white:#fff;
+}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans Thai","Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+button,input,textarea{font:inherit} button{cursor:pointer}
+.header{background:var(--blue);color:#fff;padding:22px 18px 28px;border-radius:0 0 28px 28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:25px}
+.logo{width:35px;height:35px;border:4px solid #fff;border-right-color:transparent;border-radius:10px;position:relative}
+.logo:after{content:"";position:absolute;width:8px;height:8px;background:var(--pink);border-radius:50%;right:-7px;top:5px;box-shadow:0 14px 0 var(--yellow)}
+.header h1{font-size:30px;margin:28px 0 4px}.header p{margin:0;opacity:.8}
+.wrap{max-width:760px;margin:auto;padding:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin:14px 0;box-shadow:0 5px 20px rgba(23,26,43,.04)}
+h2{font-size:20px;margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:12px}.field.full{grid-column:1/-1}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+input,textarea{width:100%;border:1px solid #D8DCE6;border-radius:12px;padding:12px;background:#fff;outline:none}
+input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(2,44,183,.1)}
+.items{overflow:auto}.item{display:grid;grid-template-columns:1fr 100px 105px 42px;gap:8px;align-items:center;margin-bottom:8px}
+.item button{border:0;background:#fff;color:#b33;border-radius:10px;height:44px}
+.add{border:1px dashed #BFC5D3;background:#fff;color:var(--blue);padding:11px 14px;border-radius:12px;font-weight:700}
+.primary{width:100%;border:0;border-radius:14px;background:var(--blue);color:#fff;padding:15px;font-weight:800;font-size:17px}
+.secondary{border:1px solid var(--blue);border-radius:12px;background:#fff;color:var(--blue);padding:12px 15px;font-weight:700}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid var(--line);padding-top:15px;margin-top:15px}.total strong{color:var(--blue);font-size:23px}
+.hint{font-size:12px;color:var(--muted);line-height:1.5}.actions{display:grid;gap:10px}
+#preview{display:none}
+.quote{background:#fff;color:#171A2B;padding:42px;max-width:800px;margin:auto}
+.quote .qtop{display:flex;justify-content:space-between;border-bottom:3px solid var(--blue);padding-bottom:20px}
+.quote h1{color:var(--blue);margin:0}.quote table{width:100%;border-collapse:collapse;margin-top:25px}.quote th,.quote td{padding:10px;border-bottom:1px solid #ddd;text-align:left}.quote th{text-align:left;background:#f5f6fa}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.item{grid-template-columns:1fr 85px 95px 38px}.quote{padding:24px}.quote .qtop{display:block}.quote .qtop>div:last-child{margin-top:15px}}
+@media print{body{background:#fff}.header,.wrap{display:none!important}#preview{display:block}.quote{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand"><span class="logo"></span>Wello</div>
+  <h1>สร้างใบเสนอราคา</h1>
+  <p>สร้างใบเสนอราคาแบบมืออาชีพ พร้อมนำไปเป็น PDF ได้ทันที</p>
+</header>
+<main class="wrap">
+<section class="card">
+<h2>ข้อมูลของคุณ</h2>
+<div class="grid">
+<div class="field"><label>ชื่อ / ชื่อธุรกิจ</label><input id="fromName" placeholder="เช่น Wello Studio"></div>
+<div class="field"><label>อีเมล / โทรศัพท์</label><input id="fromContact" placeholder="hello@example.com"></div>
+<div class="field full"><label>ที่อยู่ (ถ้ามี)</label><textarea id="fromAddress" rows="2" placeholder="ที่อยู่สำหรับออกใบเสนอราคา"></textarea></div>
+</div>
+</section>
+
+<section class="card">
+<h2>ข้อมูลลูกค้า</h2>
+<div class="grid">
+<div class="field"><label>ชื่อลูกค้า / บริษัท</label><input id="clientName" placeholder="เช่น บริษัท ABC จำกัด"></div>
+<div class="field"><label>อีเมล / โทรศัพท์</label><input id="clientContact" placeholder="client@example.com"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>รายละเอียดใบเสนอราคา</h2>
+<div class="grid">
+<div class="field"><label>เลขที่ใบเสนอราคา</label><input id="quoteNo" value="QT-001"></div>
+<div class="field"><label>วันที่</label><input id="quoteDate" type="date"></div>
+</div>
+<h2 style="margin-top:10px">รายการบริการ</h2>
+<div class="items" id="items"></div>
+<button class="add" onclick="addItem()">＋ เพิ่มรายการ</button>
+<div class="total"><span>รวมทั้งสิ้น</span><strong id="grandTotal">฿0.00</strong></div>
+</section>
+
+<section class="card">
+<h2>หมายเหตุ / เงื่อนไข</h2>
+<textarea id="notes" rows="4" placeholder="เช่น ใบเสนอราคานี้มีอายุ 15 วัน..."></textarea>
+</section>
+
+<section class="card actions">
+<button class="primary" onclick="generateQuote()">สร้างใบเสนอราคา</button>
+<p class="hint">หลังสร้างแล้ว กด “พิมพ์ / บันทึก PDF” เพื่อบันทึกเป็น PDF บน iPhone ได้</p>
+</section>
+</main>
+
+<div id="preview">
+  <div class="quote">
+    <div class="qtop">
+      <div><h1>ใบเสนอราคา</h1><div id="pFrom"></div></div>
+      <div><b>เลขที่:</b> <span id="pNo"></span><br><b>วันที่:</b> <span id="pDate"></span></div>
+    </div>
+    <div style="margin-top:24px"><b>เสนอราคาให้</b><div id="pClient"></div></div>
+    <table><thead><tr><th>รายการ</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>รวม</th></tr></thead><tbody id="pItems"></tbody></table>
+    <div style="text-align:right;margin-top:18px;font-size:20px"><b>รวมทั้งสิ้น: <span id="pTotal"></span></b></div>
+    <div style="margin-top:30px"><b>หมายเหตุ / เงื่อนไข</b><p id="pNotes" style="white-space:pre-wrap"></p></div>
+    <div style="margin-top:50px;text-align:center">
+      <button class="secondary" onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+      <button class="secondary" onclick="backToEdit()">แก้ไข</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let items=[];
+function today(){return new Date().toISOString().slice(0,10)}
+$("quoteDate").value=today();
+function addItem(name="",qty=1,price=0){
+  const id=Date.now()+Math.random(); items.push({id,name,qty,price}); renderItems();
+}
+function removeItem(id){items=items.filter(x=>x.id!==id);renderItems()}
+function renderItems(){
+  const el=$("items");el.innerHTML="";
+  items.forEach(x=>{
+    const row=document.createElement("div");row.className="item";
+    row.innerHTML=`<input placeholder="ชื่อบริการ / รายการ" value="${x.name}" oninput="upd('${x.id}','name',this.value)">
+      <input type="number" min="0" value="${x.qty}" oninput="upd('${x.id}','qty',this.value)">
+      <input type="number" min="0" value="${x.price}" oninput="upd('${x.id}','price',this.value)">
+      <button onclick="removeItem('${x.id}')">✕</button>`;
+    el.appendChild(row)
+  });calc()
+}
+function upd(id,k,v){const x=items.find(x=>String(x.id)===String(id));if(x)x[k]=k==="name"?v:Number(v);calc()}
+function calc(){const t=items.reduce((s,x)=>s+(Number(x.qty)||0)*(Number(x.price)||0),0);$("grandTotal").textContent="฿"+t.toLocaleString("th-TH",{minimumFractionDigits:2})}
+function money(n){return "฿"+Number(n).toLocaleString("th-TH",{minimumFractionDigits:2})}
+function generateQuote(){
+  $("pFrom").innerHTML=`<b>${$("fromName").value||"—"}</b><br>${$("fromContact").value||""}<br>${$("fromAddress").value||""}`;
+  $("pNo").textContent=$("quoteNo").value||"—"; $("pDate").textContent=$("quoteDate").value||"—";
+  $("pClient").innerHTML=`${$("clientName").value||"—"}<br>${$("clientContact").value||""}`;
+  $("pItems").innerHTML=items.map(x=>`<tr><td>${x.name||"—"}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money((x.qty||0)*(x.price||0))}</td></tr>`).join("");
+  const total=items.reduce((s,x)=>s+(x.qty||0)*(x.price||0),0);$("pTotal").textContent=money(total);$("pNotes").textContent=$("notes").value||"—";
+  document.querySelector(".header").style.display="none";document.querySelector(".wrap").style.display="none";$("preview").style.display="block";window.scrollTo(0,0)
+}
+function backToEdit(){document.querySelector(".header").style.display="";document.querySelector(".wrap").style.display="";$("preview").style.display="none";window.scrollTo(0,0)}
+addItem();
+</script>
+</body>
+</html>
